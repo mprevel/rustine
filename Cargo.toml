@@ -1,0 +1,19 @@
+[package]
+name = "rustine"
+version = "1.0.0"
+authors = ["Mathieu Prevel"]
+
+[dependencies]
+rand =  "*"
+chrono = { version = "0.4.3", features = ["serde"] }
+rodio = "0.7.0"
+notify = "4.0.0"
+time = "0.1.36"
+
+[lib]
+name = "rustine"
+path = "./src/lib.rs"
+
+[[bin]]
+name = "rustine-bin"
+path = "src/bin.rs"
