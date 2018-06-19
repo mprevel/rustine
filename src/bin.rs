@@ -68,6 +68,13 @@ fn main() {
                         alarm.pretty_print(&Local::now())
                     }
                 },
+                // Show current configuration
+                Ok(Message::Show) => {
+                    println!("Configuration:");
+                    for alarm in alarms.iter() {
+                        alarm.pretty_print(&Local::now())
+                    }
+                },
                 // Forward message to stop the running alarm
                 Ok(Message::StopAlarm) => {
                     let _send_result = tx_alarm_runner.send(Message::StopAlarm);
@@ -145,6 +152,9 @@ fn main() {
         match rx_keyboard_input.recv_timeout(channel_wait_timeout) {
             Ok(Message::StopAlarm)=> {
                 let _send_result = tx_alarm_manager.send(Message::StopAlarm);
+            },
+            Ok(Message::Show)=> {
+                let _send_result = tx_alarm_manager.send(Message::Show);
             },
             Ok(Message::Quit) =>     {
                 let _send_result = tx_alarm_manager.send(Message::Quit);

@@ -9,6 +9,10 @@ pub enum Message {
     AudioAndVolume(String, u32),
     /// New alarm configuration list
     Reconfigure(Vec<AlarmConfig>),
+    /// Request help message
+    Help,
+    /// Show configuration
+    Show,
     /// Notify to stop the running alarm
     StopAlarm,
     /// Stop the application
@@ -26,6 +30,8 @@ impl Message {
         match self {
             &Message::StopAlarm => "stop",
             &Message::Quit => "quit",
+            &Message::Show => "show",
+            &Message::Help => "help",
             _ => "other_message"
         }
     }
@@ -48,6 +54,19 @@ pub fn watch_input(tx_keyboard_input: Sender<Message>) -> JoinHandle<()> {
                     break;
                 } else if forward == Message::StopAlarm.as_str() {
                     let _send_result = tx_keyboard_input.send(Message::StopAlarm);
+                } else if forward == Message::Show.as_str() {
+                    let _send_result = tx_keyboard_input.send(Message::Show);
+                } else if forward == Message::Help.as_str() {
+                    println!("\n
+'{}' shows this message
+'{}' shows the loaded configuration
+'{}' stops the running alarm
+'{}' stops the application\n",
+                        Message::Help.as_str(),
+                        Message::Show.as_str(),
+                        Message::StopAlarm.as_str(),
+                        Message::Quit.as_str()
+                    )
                 }
             }
         }

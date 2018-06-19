@@ -37,6 +37,8 @@ Get `Cargo`.
 * Use `cargo doc --no-deps` to generate the docs.
 
 Once running:
+* `help` to show the supported commands
+* `show` to show the alarm configuration
 * `stop` to stop a running alarm
 * `quit` to stop the whole application
 
