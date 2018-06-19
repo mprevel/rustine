@@ -26,19 +26,19 @@ impl AlarmConfig {
     /// Checks if the alarm has been launched today or before the app started
     pub fn already_run_today(&self, now: &DateTime<Local>) -> bool {
         self.last_run.day() == now.day() && {
-            self.last_run.hour() * 24 * 60 + self.last_run.minute() * 60 + self.last_run.second() >=
-                self.time.hours * 24 * 60 + self.time.minutes * 60 + self.time.seconds
+            hms_gte(
+                (self.last_run.hour(), self.last_run.minute(), self.last_run.second()),
+                (self.time.hours, self.time.minutes, self.time.seconds)
+            )
         }
     }
 
     /// Checks if the current time is >= to the time set for the alarm to run
     pub fn is_expired(&self, now: &DateTime<Local>) -> bool {
-        now.hour() * 24 * 60 +
-            now.minute() * 60 +
-            now.second() >=
-            self.time.hours * 24 * 60 +
-                self.time.minutes * 60 +
-                self.time.seconds
+        hms_gte(
+            (now.hour(), now.minute(), now.second()),
+            (self.time.hours, self.time.minutes, self.time.seconds)
+        )
     }
 
     /// Checks if the current day is configured to run the alarm
@@ -68,6 +68,19 @@ impl AlarmConfig {
                  !self.already_run_today(now)
         )
     }
+}
+
+/// Compares hours, minutes, seconnds for 2 times
+fn hms_gte(hms1 : (u32, u32, u32), hms2: (u32, u32, u32)) -> bool {
+    hms1.0 * 3600 + hms1.1 * 60 + hms1.2 >= hms2.0 * 3600 + hms2.1 * 60 + hms2.2
+}
+
+#[test]
+fn test_hms_gte() {
+    assert!(hms_gte((0,0,0), (0,0,0)));
+    assert!(hms_gte((8,0,0), (7,59,59)));
+    assert!(hms_gte((23,0,0), (0,59,59)));
+    assert!(hms_gte((0,1,0), (0,0,59)));
 }
 
 /// Parses a string to an unsigned int given a min and a max
